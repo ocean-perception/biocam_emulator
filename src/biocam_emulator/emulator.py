@@ -13,6 +13,38 @@ import time
 from virtual_serial_ports import VirtualSerialPorts
 
 
+class BioCamStateMachine:
+    def __init__(self, laser_armed = False):
+        self.laser_armed = laser_armed
+        self.idle()
+
+    @property
+    def state(self):
+        return self._state + self._laser_state
+
+    @property
+    def _laser_state(self):
+        if self.laser_armed:
+            return 4
+        else:
+            return 0
+
+    def start_mapping(self):
+        self._state = 4
+
+    def camera_calibration(self):
+        self._state = 2
+
+    def laser_calibration(self):
+        self._state = 3
+
+    def idle(self):
+        self._state = 1
+
+    def stop(self):
+        self.idle()
+
+
 class BioCamCommand:
     def __init__(self, command, response=None, has_arguments=False):
         self.command = "*" + command + "\r\n"
@@ -49,15 +81,8 @@ class BioCamEmulator:
             BioCamCommand("bc_stop_summaries"),
         ]
 
-        self.operation_mode = 0
-        """ Operation mode
-        0: Invalid
-        1: Idle, not armed
-        2: Camera cal
-        3: laser Cal
-        4: Mapping
-        Adding 4 to the operation mode indicates that the laser is armed.
-        """
+        self.mode = BioCamStateMachine()
+        self.mode.idle()
 
         with VirtualSerialPorts(2) as ports:
             self.port0 = ports[0]
@@ -88,7 +113,7 @@ class BioCamEmulator:
         status operation_mode number_images_cam0 number_images_cam1 score_cam0 score_cam1 cpu_temperature cam0_temperature cam1_temperature available_disk_space\n
         status 8 00000312 00010852 55257 09258 42 34 35 0024591674256\n
         """
-        pass
+        msg = "status " + self.mode.state + " " + num_images_cam0
 
     def request_time(self):
         """BioCam4000 sends
