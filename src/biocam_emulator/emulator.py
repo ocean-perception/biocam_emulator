@@ -52,6 +52,7 @@ class BioCamCommand:
     def __init__(self, command, response=None, has_arguments=False):
         self.command = "*" + command + "\n"
         self.response = "$" + command + "\n"
+        self.has_arguments = has_arguments
         if response is not None:
             self.response = response
 
@@ -64,7 +65,9 @@ class BioCamCommand:
         else:
             split_command = command.split(" ")
             if split_command[0] == self.command:
-                return self.response + " ".join(split_command[1:]) + "\r\n"
+                return self.response
+            elif split_command[0] == self.command[:-1]:
+                return self.response[:-1] + " " + " ".join(split_command[1:]) + "\n"
             else:
                 return None
 
@@ -84,10 +87,11 @@ class BioCamEmulator:
         self.stop_thread = False
 
         self.message_outbox = []
+        self.message_inbox = ""
 
         self.state_thread = threading.Thread(target=self.state_thread_fn)
-        self.report_status_timer = threading.Timer(60.0, self.report_status)
-        self.request_time_timer = threading.Timer(600.0, self.request_time)
+        self.report_status_timer = threading.Timer(6.0, self.report_status)
+        self.request_time_timer = threading.Timer(6.0, self.request_time)
 
         self.ports = VirtualSerialPorts(2, loopback=False, debug=True)
 
@@ -116,7 +120,7 @@ class BioCamEmulator:
             print(self.port1)
             self.serial0 = serial.Serial(
                 ports[0],
-                baudrate=56700,
+                baudrate=57600,
                 timeout=0.1,
                 bytesize=8,
                 parity="N",
@@ -135,14 +139,19 @@ class BioCamEmulator:
                 break
 
     def emulate_step(self):
-        data = self.serial0.read_until(b"\n").decode("utf-8")
+        command = self.serial0.readline()
+        # print("Received: " + str(command))
+        self.message_inbox += command.decode("utf-8")
+        # print("Message inbox: " + self.message_inbox)
 
-        if data == b"":
+        if not command.endswith(b"\n"):
             return
 
-        # if self.serial0.in_waiting > 0:
-        command = self.serial0.readline().decode("utf-8")
-        print("Received command: " + command)
+        command = self.message_inbox
+        self.message_inbox = ""
+        if command == "":
+            return
+        print("Received command: " + str(command))
         response = self.check_command(command)
         if response is not None:
             print("Sending response: " + response)
@@ -181,23 +190,23 @@ class BioCamEmulator:
 
         msg = (
             "status "
-            + self.mode.state
+            + str(self.mode.state)
             + " "
-            + self.num_images_cam0
+            + str(self.num_images_cam0)
             + " "
-            + self.num_images_cam1
+            + str(self.num_images_cam1)
             + " "
-            + self.score_cam0
+            + str(self.score_cam0)
             + " "
-            + self.score_cam1
+            + str(self.score_cam1)
             + " "
-            + self.cpu_temperature
+            + str(self.cpu_temperature)
             + " "
-            + self.cam0_temperature
+            + str(self.cam0_temperature)
             + " "
-            + self.cam1_temperature
+            + str(self.cam1_temperature)
             + " "
-            + self.available_disk_space
+            + str(self.available_disk_space)
             + "\n"
         )
         self.message_outbox.append(msg)
@@ -257,10 +266,9 @@ class BioCamEmulator:
                 if len(data) != 3:
                     print("Invalid velocity nav data received")
         for command in self.commands:
-            if command.command == msg:
-                response = command.check_and_reply(msg)
-                if response is not None:
-                    return response
+            response = command.check_and_reply(msg)
+            if response is not None:
+                return response
 
 
 def main():
