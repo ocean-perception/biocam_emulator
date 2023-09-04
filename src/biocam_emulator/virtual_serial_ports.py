@@ -18,13 +18,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import argparse
 import os
 import pty
-from selectors import DefaultSelector as Selector, EVENT_READ
-from threading import Thread
 import sys
 import tty
+from selectors import EVENT_READ
+from selectors import DefaultSelector as Selector
+from threading import Thread
 
 
 class VirtualSerialPortException(Exception):
