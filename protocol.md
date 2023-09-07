@@ -1,11 +1,26 @@
 # Communication protocol BioCam4000
 
-**RS232 setup: 57600/8-N-1**
-
-- Baud rate: 57600
-- Length: 8
-- Parity: 0
-- Stop-bit: 1
+<table>
+  <thead>
+    <tr>
+      <td align="left">
+        :loop: RS232 Setup
+      </td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <ul>
+          <li>Baud rate: 57600</li>
+          <li>Length: 8</li>
+          <li>Parity: 0</li>
+          <li>Stop-bit: 1</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 Using canonical mode.\
 If using termios in C, use the following settings:
@@ -26,20 +41,20 @@ tty.c_lflag = ISIG \| IEXTEN \| ICANON; // local modes
 BioCam4000 will acknowledge receipt of a command by sending back the
 same command but starting with a \$ instead of a \*:
 
-| Command to BioCam4000                 | Acknowledgement from BioCam4000       |
-| ------------------------------------- | ------------------------------------- |
-| \*bc_start_laser_calibration\\n       | \$bc_start_laser_calibration\\n       |
-| \*bc_start_mapping\\n                 | \$bc_start_mapping\\n                 |
-| \*bc_stop_acquisition\\n              | \$bc_stop_acquisition\\n              |
-| \*bc_start_summaries \[i1\] \[i2\]\\n | \$bc_start_summaries \[i1\] \[i2\]\\n |
-| \*bc_stop_summaries\\n                | \$bc_stop_summaries\\n                |
-| \*bc_shutdown\\n                      | \$bc_shutdown\\n                      |
+| Command to BioCam4000                                                 | Acknowledgement from BioCam4000                                       |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| \*bc_start_laser_calibration\\n                                       | \$bc_start_laser_calibration\\n                                       |
+| \*bc_start_mapping\\n                                                 | \$bc_start_mapping\\n                                                 |
+| \*bc_stop_acquisition\\n                                              | \$bc_stop_acquisition\\n                                              |
+| \*bc_start_summaries <span style="color:blue">\[i1\] \[i2\]</span>\\n | \$bc_start_summaries <span style="color:blue">\[i1\] \[i2\]</span>\\n |
+| \*bc_stop_summaries\\n                                                | \$bc_stop_summaries\\n                                                |
+| \*bc_shutdown\\n                                                      | \$bc_shutdown\\n                                                      |
 
 ---
 
-_Note_: If no acknowledgement is received within 1 minute, send command again,
-up to 10 times.\
-\*bc_start_laser_calibration won't be used with ALR.
+> 📝 _Note_: If no acknowledgement is received within 1 minute, send command again,
+> up to 10 times.\
+> \*bc_start_laser_calibration won't be used with ALR.
 
 ## Command from BioCam4000
 
@@ -57,8 +72,8 @@ clocks.
 
 ## Navigation data
 
-_Note_: BioCam4000 does not acknowledge receipt of navigation data
-messages.
+> 📝 _Note_: BioCam4000 does not acknowledge receipt of navigation data
+> messages.
 
 All nav messages first contain the timestamp when the measurement was
 made according to system time, followed by the sensor time timestamp
@@ -146,16 +161,16 @@ status 8 00000312 00010852 55257 09258 42 34 35 0024591674256\n
 ```
 
 - **operation_mode** is a number between 1 and 8
-  - 1: Not acquiring any data, laser reed switch not armed
-  - 2: Camera calibration, laser reed switch not armed
-  - 3: Laser calibration, laser reed switch not armed
-  - 4: Mapping, laser reed switch not armed
-  - 5: Not acquiring any data, laser reed switch armed
-  - 6: Camera calibration, laser reed switch armed
-  - 7: Laser calibration, laser reed switch armed
-  - 8: Mapping, laser reed switch armed
-  - 9: Computing summaries
-  - 10: Sending summaries
+  - <span style="color:darkblue">**1**</span>: Not acquiring any data, laser reed switch not armed
+  - <span style="color:darkblue">**2**</span>: Camera calibration, laser reed switch not armed
+  - <span style="color:darkblue">**3**</span>: Laser calibration, laser reed switch not armed
+  - <span style="color:darkblue">**4**</span>: Mapping, laser reed switch not armed
+  - <span style="color:darkblue">**5**</span>: Not acquiring any data, laser reed switch armed
+  - <span style="color:darkblue">**6**</span>: Camera calibration, laser reed switch armed
+  - <span style="color:darkblue">**7**</span>: Laser calibration, laser reed switch armed
+  - <span style="color:darkblue">**8**</span>: Mapping, laser reed switch armed
+  - <span style="color:darkblue">**9**</span>: Computing summaries
+  - <span style="color:darkblue">**10**</span>: Sending summaries
 - **number_images_cam0** is a number \< 100000000 (probably much smaller,
   but leaving margin in case of 30 day missions). Zero-padded to 8
   digits.
@@ -191,4 +206,4 @@ summary done
 
 The summary ID is a two digit, zero padded number between 0 and 99 (e.g. 00, 01, 02,...,99). The HEX_STRING is a string of hexadecimal characters, each representing a byte. The length of the HEX_STRING is 1960 bytes or less. The summary done message is sent when all summaries have been sent.
 
-_Note_: In between summaries, you may receive time requests and/or status messages.
+> 📝 _Note_: In between summaries, you may receive time requests and/or status messages.
