@@ -189,6 +189,6 @@ summary ID+N HEX_STRING\n
 summary done
 ```
 
-The summary ID is a number between 0 and 65535. The HEX_STRING is a string of hexadecimal characters, each representing a byte. The length of the HEX_STRING is 1960 bytes or less. The summary done message is sent when all summaries have been sent.
+The summary ID is a two digit, zero padded number between 0 and 99 (e.g. 00, 01, 02,...,99). The HEX_STRING is a string of hexadecimal characters, each representing a byte. The length of the HEX_STRING is 1960 bytes or less. The summary done message is sent when all summaries have been sent.
 
 _Note_: In between summaries, you may receive time requests and/or status messages.
