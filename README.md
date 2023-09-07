@@ -30,10 +30,4 @@ picocom -b 57600 -c --omap crlf /dev/pts/5
 
 ## BioCam Serial Protocol
 
-The BioCam serial protocol is a simple ASCII-based protocol. Each message is terminated
-with a line feed (`\n`). For more details on the protocol, see the [BioCam Serial Protocol
-Documentation](https://sotonac.sharepoint.com/:w:/r/teams/OPLab/Shared%20Documents/General/2%20Research/Projects/BioCam/procedures%20and%20checklists/Communication%20protocol%20BioCam4000.docx?d=wa513dffc53854c12adeb3d02e6a4e072&csf=1&web=1&e=ecOUYl).
-
-## Original protocol
-
-The original protocol is in the file [protocol.md](protocol.md).
+The protocol description is in the file [protocol.md](protocol.md).
