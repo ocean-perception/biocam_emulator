@@ -50,11 +50,10 @@ same command but starting with a \$ instead of a \*:
 | \*bc_stop_summaries\\n                                                | \$bc_stop_summaries\\n                                                |
 | \*bc_shutdown\\n                                                      | \$bc_shutdown\\n                                                      |
 
----
+> 📝 _Note_
+> If no acknowledgement is received within 1 minute, send command again, up to 10 times.
 
-> 📝 _Note_: If no acknowledgement is received within 1 minute, send command again,
-> up to 10 times.\
-> \*bc_start_laser_calibration won't be used with ALR.
+> 📝 _Note 2_ > \*bc_start_laser_calibration won't be used with ALR.
 
 ## Command from BioCam4000
 
@@ -72,8 +71,8 @@ clocks.
 
 ## Navigation data
 
-> 📝 _Note_: BioCam4000 does not acknowledge receipt of navigation data
-> messages.
+> 📝 _Note_
+> BioCam4000 does not acknowledge receipt of navigation data messages.
 
 All nav messages first contain the timestamp when the measurement was
 made according to system time, followed by the sensor time timestamp
@@ -206,4 +205,5 @@ summary done
 
 The summary ID is a two digit, zero padded number between 0 and 99 (e.g. 00, 01, 02,...,99). The HEX_STRING is a string of hexadecimal characters, each representing a byte. The length of the HEX_STRING is 1960 bytes or less. The summary done message is sent when all summaries have been sent.
 
-> 📝 _Note_: In between summaries, you may receive time requests and/or status messages.
+> 📝 _Note_
+> In between summaries, you may receive time requests and/or status messages.
