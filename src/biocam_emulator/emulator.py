@@ -389,6 +389,7 @@ class BioCamEmulator:
                         print("\t - Received end_idx: " + command.arguments[1])
                         print("Exception message: " + str(e))
                 elif command.command == "*bc_stop_summaries\n":
+                    self.self.start_summarires_timer.cancel()
                     self.mode.idle()
                 return response
 
