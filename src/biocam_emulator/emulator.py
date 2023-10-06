@@ -319,7 +319,7 @@ class BioCamEmulator:
         """Check if the received message is valid. Otherwise, print error in console"""
         if msg.startswith("*time"):
             # Check it's followed by a timestamp (13 digits) milliseconds since epoch
-            if len(msg) != 19:
+            if len(msg) != 20:
                 print("Invalid timestamp received")
         if msg.startswith("nav"):
             """nav message update
