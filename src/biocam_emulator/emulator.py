@@ -298,15 +298,27 @@ class BioCamEmulator:
         self.time_timer_thread = Timer(self.request_time_period, self.request_time)
         self.time_timer_thread.start()
 
-    def sending_summaries_timer_thread(self, start_idx, end_idx):
+    def sending_summaries_timer_thread(self, start_idx, end_idx, idx_list=None):
         self.mode.sending_summaries()
+
+        if idx_list is not None:
+            # Send summaries in idx_list
+            for idx in idx_list:
+                if idx > self.remote_awareness_data.len():
+                    continue
+                msg = f"summary {idx:02d} " + self.remote_awareness_data.get(int(idx))
+                self.message_outbox.append(msg)
+                time.sleep(1)
+            self.message_outbox.append("summary done\n")
+            self.mode.idle()
+            return
 
         # check start and end are within the range of the data
         data_len = self.remote_awareness_data.len()
         if start_idx < 0 or start_idx >= data_len:
             start_idx = 0
-        if end_idx < 0 or end_idx >= data_len:
-            end_idx = data_len - 1
+        if end_idx < 0 or end_idx > data_len:
+            end_idx = data_len
 
         for i in range(start_idx, end_idx):
             msg = f"summary {i:02d} " + self.remote_awareness_data.get(i)
