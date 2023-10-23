@@ -112,9 +112,13 @@ class BioCamCommand:
                 return self.response
             return None
         split_command = command.split(" ")
-        if len(split_command) != (self.num_arguments + 1):
+        if len(split_command) != (self.num_arguments + 1) and self.num_arguments != -1:
             return None
         self.arguments = split_command[1:]
+        # Remove \n from the end
+        if len(self.arguments) > 0:
+            if self.arguments[-1].endswith("\n"):
+                self.arguments[-1] = self.arguments[-1].replace("\n", "")
         return self.response[:-1] + " " + " ".join(split_command[1:]) + "\n"
 
 
@@ -157,6 +161,7 @@ class BioCamEmulator:
             BioCamCommand("bc_start_laser_calibration"),
             BioCamCommand("bc_shutdown"),
             BioCamCommand("bc_start_summaries", num_arguments=2),
+            BioCamCommand("bc_get_summaries", num_arguments=-1),
             BioCamCommand("bc_stop_summaries"),
         ]
 
@@ -389,19 +394,28 @@ class BioCamEmulator:
                     try:
                         start_idx = int(command.arguments[0])
                         end_idx = int(command.arguments[1])
-                        self.start_summarires_timer = Timer(
+                        self.start_summaries_timer = Timer(
                             20,
                             self.sending_summaries_timer_thread,
                             args=(start_idx, end_idx),
                         )
-                        self.start_summarires_timer.start()
+                        self.start_summaries_timer.start()
                     except Exception as e:
                         print("Invalid arguments for summaries: ")
                         print("\t - Received start_idx: " + command.arguments[0])
                         print("\t - Received end_idx: " + command.arguments[1])
                         print("Exception message: " + str(e))
+                elif command.command.startswith("*bc_get_summaries"):
+                    summary_idx_list = [int(x) for x in command.arguments[1:]]
+                    print(summary_idx_list)
+                    self.start_summaries_timer = Timer(
+                        5,
+                        self.sending_summaries_timer_thread,
+                        args=(None, None, summary_idx_list),
+                    )
+                    self.start_summaries_timer.start()
                 elif command.command == "*bc_stop_summaries\n":
-                    self.self.start_summarires_timer.cancel()
+                    self.self.start_summaries_timer.cancel()
                     self.mode.idle()
                 return response
 

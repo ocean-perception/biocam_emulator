@@ -191,7 +191,7 @@ status 8 00000312 00010852 55257 09258 42 34 35 0024591674256\n
 
 ## Summaries
 
-If summaries are requested using the command `*bc_start_summaries\n`, BioCam4000 will change status to 9 and start computing summaries. When summaries are ready, BioCam4000 will change status to 10 and start sending summaries.
+If summaries are requested using the command `*bc_start_summaries X Y\n`, BioCam4000 will change status to 9 and start computing summaries. When summaries are ready, BioCam4000 will change status to 10 and start sending summaries.
 
 The summaries are sent in the following format:
 
@@ -205,6 +205,12 @@ summary done
 ```
 
 The summary ID is a two digit, zero padded number between 0 and 99 (e.g. 00, 01, 02,...,99). The HEX_STRING is a string of hexadecimal characters, each representing a byte. The length of the HEX_STRING is 1960 bytes or less. The summary done message is sent when all summaries have been sent.
+
+You can request all summaries by providing the start index as `-1` and the end index as
+`-1`. You can also use `-1` as either start or end if you want to request all summaries up to or from a certain index.
+
+To request non-consecute indexed summaries, use
+`*bc_get_summaries X [Y Z ...]\n` where `X`, `Y`, `Z`, etc. are the indexes of the summaries you want to request.
 
 > 📝 _Note_\
 > In between summaries, you may receive time requests and/or status messages.

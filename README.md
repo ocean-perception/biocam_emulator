@@ -4,6 +4,16 @@ This python package is a simple serial emulator. It is intended to be used as a 
 for BioCam's serial communication. It is not intended to be used as a replacement for
 the actual BioCam device.
 
+## NOTES
+
+- Iridium queue has 4 retries before dropping the message (5 min) it can be increased
+- We can use -1 -1 as indexes for the summaries. (add documentation)
+- `*bc_get_summaries X [Y Z ...]\n` to request multiple, non correlative summaries.
+- Encode the message number somewhere so that we know which ones we've received.
+- Check the messages received contain the same info as the ones sent
+- Prepare a quick display GUI
+- Update BioCam firmware
+
 ## Installation
 
 You can install this package with pip:
